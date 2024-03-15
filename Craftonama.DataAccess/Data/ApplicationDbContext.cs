@@ -1,7 +1,7 @@
-﻿using CraftonamaWebsite.Models;
+﻿using Craftonama.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace CraftonamaWebsite.Data
+namespace Craftonama.DataAccess.Data
 {
     public class ApplicationDbContext : DbContext
     {

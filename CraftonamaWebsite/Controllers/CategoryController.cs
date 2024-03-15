@@ -1,20 +1,21 @@
-﻿using CraftonamaWebsite.Data;
-using CraftonamaWebsite.Models;
+﻿using Craftonama.Models;
+using Craftonama.DataAccess.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
+using Craftonama.DataAccess.Repository.IRepository;
 
 namespace CraftonamaWebsite.Controllers
 {
     public class CategoryController : Controller
     {
-        private readonly ApplicationDbContext _db;
-        public CategoryController(ApplicationDbContext db)
+        private readonly IUnitOfWork _unitOfWork;
+        public CategoryController(IUnitOfWork unitOfWork)
         {
-            _db= db;
-        }
+			_unitOfWork = unitOfWork;
+		}
         public IActionResult Index()
         {
-            List<Category> objCategoryList = _db.Categories.ToList();
+            List<Category> objCategoryList = _unitOfWork.categoryRepo.GetAll().ToList();
             return View(objCategoryList);
         }
 		#region Create
@@ -35,8 +36,8 @@ namespace CraftonamaWebsite.Controllers
             }
             if (ModelState.IsValid) 
             {
-				_db.Categories.Add(categoryObj);
-				_db.SaveChanges();
+				_unitOfWork.categoryRepo.Add(categoryObj);
+				_unitOfWork.Save();
 				TempData["success"] = "Category created successfully !";
 				return RedirectToAction("Index");
 
@@ -53,7 +54,7 @@ namespace CraftonamaWebsite.Controllers
 				return NotFound();
 			}
 			/*Find can be used only for primary key*/
-			Category? categoryFromDb= _db.Categories.Find(id);
+			Category? categoryFromDb = _unitOfWork.categoryRepo.Get(u=>u.CategoryId==id);
 
 			/*FirstOrDefault can be used with any field*/
 			//Category? categoryFromDb2 = _db.Categories.FirstOrDefault(u => u.CategoryId == id);
@@ -74,8 +75,8 @@ namespace CraftonamaWebsite.Controllers
 			
 			if (ModelState.IsValid)
 			{
-				_db.Categories.Update(categoryObj);
-				_db.SaveChanges();
+				_unitOfWork.categoryRepo.Update(categoryObj);
+				_unitOfWork.Save();
 				TempData["success"] = "Category updated successfully !";
 				return RedirectToAction("Index");
 
@@ -104,13 +105,13 @@ namespace CraftonamaWebsite.Controllers
 		//[HttpPost,ActionName("Delete")]
 		public IActionResult Delete(int? id)
 		{
-			Category? obj = _db.Categories.Find(id);
+			Category? obj = _unitOfWork.categoryRepo.Get(u=>u.CategoryId==id);
 			if (obj == null)
 			{
 				return NotFound();
 			}
-			_db.Categories.Remove(obj);
-			_db.SaveChanges();
+			_unitOfWork.categoryRepo.Remove(obj);
+			_unitOfWork.Save();
 			TempData["success"] = "Category deleted successfully !";
 
 			return RedirectToAction("Index");

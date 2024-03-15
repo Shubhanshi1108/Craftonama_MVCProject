@@ -1,4 +1,4 @@
-namespace CraftonamaWebsite.Models
+namespace Craftonama.Models
 {
     public class ErrorViewModel
     {

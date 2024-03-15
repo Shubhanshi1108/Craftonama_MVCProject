@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace CraftonamaWebsite.Migrations
+namespace Craftonama.DataAccess.Migrations
 {
     /// <inheritdoc />
     public partial class AddCategoryTabletoDB : Migration
